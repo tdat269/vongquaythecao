@@ -2,98 +2,136 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nhận thẻ cào miễn phí</title>
+  <title>🎁 QUAY ĐỂ NHẬN THẺ CÀO</title>
   <style>
     body {
-      background-color: #111;
+      background-color: #1b1b1b;
       color: #fff;
-      font-family: Arial, sans-serif;
       text-align: center;
-      padding: 50px;
+      font-family: Arial, sans-serif;
     }
     h1 {
-      color: #ff4dff;
+      color: #ff6600;
+      margin-top: 40px;
     }
     #wheel {
       margin: 30px auto;
-      width: 200px;
-      height: 200px;
-      border: 10px solid #ff4dff;
+      width: 300px;
+      height: 300px;
       border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 24px;
+      border: 10px solid #fff;
+      position: relative;
+    }
+    #spin {
+      margin-top: 20px;
+      padding: 15px 30px;
+      font-size: 20px;
+      background: linear-gradient(to right, orange, orangered);
+      color: white;
+      border: none;
+      border-radius: 10px;
       cursor: pointer;
-      background: radial-gradient(#222, #000);
+    }
+    #pointer {
+      width: 0; 
+      height: 0; 
+      border-left: 20px solid transparent;
+      border-right: 20px solid transparent;
+      border-bottom: 40px solid white;
+      margin: 20px auto;
     }
     #result {
-      font-size: 24px;
-      margin-top: 30px;
+      margin-top: 20px;
+      font-size: 22px;
+      color: #0f0;
     }
-    #getCardBtn, #showCardInfo {
+    #nhanTheBtn {
       display: none;
       margin-top: 20px;
       padding: 10px 20px;
       font-size: 18px;
-      background-color: #ff4dff;
+      background-color: #28a745;
       color: #fff;
       border: none;
       border-radius: 8px;
       cursor: pointer;
     }
-    #cardInfo {
-      margin-top: 20px;
-      font-size: 20px;
-      color: #0f0;
-    }
   </style>
 </head>
 <body>
-  <h1>🎁 Nhận thẻ cào miễn phí 🎁</h1>
-  <div id="wheel">QUAY</div>
+  <h1>🎉 QUAY ĐỂ NHẬN THẺ CÀO</h1>
+  <div id="pointer"></div>
+  <canvas id="wheel" width="300" height="300"></canvas>
+  <div>
+    <button id="spin">QUAY</button>
+  </div>
   <div id="result"></div>
-  <button id="getCardBtn" onclick="redirectLink()">Nhận thẻ</button>
-  <button id="showCardInfo" onclick="showCard()">Xem mã thẻ</button>
-  <div id="cardInfo"></div>
+  <button id="nhanTheBtn">Nhận thẻ</button>
 
   <script>
-    const prizes = ["10.000đ", "20.000đ", "50.000đ", "100.000đ", "200.000đ", "500.000đ"];
+    const canvas = document.getElementById("wheel");
+    const ctx = canvas.getContext("2d");
+    const spinBtn = document.getElementById("spin");
+    const result = document.getElementById("result");
+    const nhanTheBtn = document.getElementById("nhanTheBtn");
 
-    const fakeCards = [
-      {amount: "10.000đ", code: "12345678901234", serial: "100000000001"},
-      {amount: "20.000đ", code: "23456789012345", serial: "100000000002"},
-      {amount: "50.000đ", code: "34567890123456", serial: "100000000003"},
-      {amount: "100.000đ", code: "45678901234567", serial: "100000000004"},
-      {amount: "200.000đ", code: "56789012345678", serial: "100000000005"},
-      {amount: "500.000đ", code: "67890123456789", serial: "100000000006"}
-    ];
+    const prizes = ["10k", "20k", "30k", "30k", "40k", "50k", "60k", "70k", "80k", "90k", "200k", "500k"];
+    const colors = ["#ff0000", "#ff9900", "#33cc33", "#00ccff", "#ff66cc", "#9966ff", "#ffff00", "#ff6600", "#0099cc", "#cc33ff", "#00cc99", "#ff3399"];
 
-    let currentPrize = "";
+    const sliceAngle = 360 / prizes.length;
+    let angle = 0;
+    let isSpinning = false;
 
-    document.getElementById('wheel').onclick = function () {
-      const prize = prizes[Math.floor(Math.random() * prizes.length)];
-      currentPrize = prize;
-      document.getElementById('result').innerText = `Bạn trúng thẻ: ${prize}`;
-      document.getElementById('getCardBtn').style.display = 'inline-block';
-    }
-
-    function redirectLink() {
-      window.open("https://yeumoney.com/OmFmiio", "_blank");
-      document.getElementById('showCardInfo').style.display = 'inline-block';
-    }
-
-    function showCard() {
-      const card = fakeCards.find(c => c.amount === currentPrize);
-      if (card) {
-        document.getElementById('cardInfo').innerHTML = `
-          <strong>Mệnh giá:</strong> ${card.amount}<br>
-          <strong>Mã thẻ:</strong> ${card.code}<br>
-          <strong>Serial:</strong> ${card.serial}
-        `;
+    function drawWheel() {
+      for (let i = 0; i < prizes.length; i++) {
+        ctx.beginPath();
+        ctx.fillStyle = colors[i];
+        ctx.moveTo(150, 150);
+        ctx.arc(150, 150, 150, i * sliceAngle * Math.PI / 180, (i + 1) * sliceAngle * Math.PI / 180);
+        ctx.lineTo(150, 150);
+        ctx.fill();
+        ctx.save();
+        ctx.translate(150, 150);
+        ctx.rotate((i + 0.5) * sliceAngle * Math.PI / 180);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "#fff";
+        ctx.font = "16px Arial";
+        ctx.fillText(prizes[i], 140, 5);
+        ctx.restore();
       }
     }
+
+    drawWheel();
+
+    spinBtn.onclick = function () {
+      if (isSpinning) return;
+      isSpinning = true;
+      result.innerText = "";
+      nhanTheBtn.style.display = "none";
+
+      const spinAngle = 360 * 5 + Math.floor(Math.random() * 360);
+      const prizeIndex = Math.floor(((360 - (spinAngle % 360)) % 360) / sliceAngle);
+      angle = 0;
+
+      let spinTime = 0;
+      const spinInterval = setInterval(() => {
+        angle += 10;
+        canvas.style.transform = `rotate(${angle}deg)`;
+        spinTime += 10;
+        if (spinTime >= 5000) {
+          clearInterval(spinInterval);
+          const wonPrize = prizes[prizeIndex];
+          result.innerText = `🎉 Bạn trúng: ${wonPrize}`;
+          localStorage.setItem("ketqua", wonPrize);
+          nhanTheBtn.style.display = "inline-block";
+          isSpinning = false;
+        }
+      }, 10);
+    };
+
+    nhanTheBtn.onclick = function () {
+      window.location.href = "https://yeumoney.com/abcd123"; // 🔁 Thay bằng link của bạn
+    };
   </script>
 </body>
 </html>
