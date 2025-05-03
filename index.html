@@ -78,12 +78,9 @@
     }
 
     function redirect() {
-  // Lưu flag đã quay để biết cần chuyển sang trang thecao sau khi vượt link
-  localStorage.setItem("passed_yeumoney", "false");
-
-  // Chuyển người dùng đến link Yeumoney
-  window.location.href = "https://yeumoney.com/OmFmiio";
-}
+      // Vượt link trước rồi chuyển sang thecao.html
+      window.location.href = "https://yeumoney.com/OmFmiio?next=thecao.html";
+    }
   </script>
 </body>
 </html>
