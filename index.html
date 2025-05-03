@@ -1,99 +1,113 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nhận thẻ cào miễn phí</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎁 Nhận thẻ cào miễn phí 🎁</title>
   <style>
     body {
       background-color: #111;
       color: #fff;
       font-family: Arial, sans-serif;
       text-align: center;
-      padding: 50px;
+      padding-top: 40px;
     }
     h1 {
-      color: #ff4dff;
+      color: violet;
     }
     #wheel {
-      margin: 30px auto;
-      width: 200px;
-      height: 200px;
-      border: 10px solid #ff4dff;
+      margin: 0 auto;
+      width: 300px;
+      height: 300px;
+      border: 10px solid violet;
       border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 24px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 5s cubic-bezier(0.33, 1, 0.68, 1);
+    }
+    #wheel span {
+      position: absolute;
+      width: 50%;
+      height: 50%;
+      background: #222;
+      color: white;
+      line-height: 2em;
+      font-size: 14px;
+      transform-origin: 100% 100%;
+      text-align: right;
+      padding-right: 10px;
+    }
+    #spin {
+      margin-top: 20px;
+      padding: 10px 30px;
+      background-color: violet;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 18px;
       cursor: pointer;
-      background: radial-gradient(#222, #000);
     }
     #result {
-      font-size: 24px;
-      margin-top: 30px;
-    }
-    #getCardBtn, #showCardInfo {
-      display: none;
-      margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 18px;
-      background-color: #ff4dff;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    #cardInfo {
       margin-top: 20px;
       font-size: 20px;
-      color: #0f0;
+    }
+    #claim {
+      margin-top: 15px;
+      display: none;
+      padding: 10px 20px;
+      background: magenta;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
     }
   </style>
 </head>
 <body>
   <h1>🎁 Nhận thẻ cào miễn phí 🎁</h1>
-  <div id="wheel">QUAY</div>
+  <div id="wheel"></div>
+  <button id="spin">QUAY</button>
   <div id="result"></div>
-  <button id="getCardBtn" onclick="redirectLink()">Nhận thẻ</button>
-  <button id="showCardInfo" onclick="showCard()">Xem mã thẻ</button>
-  <div id="cardInfo"></div>
+  <button id="claim" onclick="window.location.href='https://yeumoney.com/OmFmiio'">Nhận thẻ</button>
 
   <script>
-    const prizes = ["10.000đ", "20.000đ", "50.000đ", "100.000đ", "200.000đ", "500.000đ"];
+    const wheel = document.getElementById("wheel");
+    const result = document.getElementById("result");
+    const spinBtn = document.getElementById("spin");
+    const claimBtn = document.getElementById("claim");
 
-    const fakeCards = [
-      {amount: "10.000đ", code: "12345678901234", serial: "100000000001"},
-      {amount: "20.000đ", code: "23456789012345", serial: "100000000002"},
-      {amount: "50.000đ", code: "34567890123456", serial: "100000000003"},
-      {amount: "100.000đ", code: "45678901234567", serial: "100000000004"},
-      {amount: "200.000đ", code: "56789012345678", serial: "100000000005"},
-      {amount: "500.000đ", code: "67890123456789", serial: "100000000006"}
-    ];
+    const prizes = ["10k", "20k", "30k", "40k", "50k", "60k", "70k", "80k", "90k", "200k", "500k"];
 
-    let currentPrize = "";
+    // Draw slices
+    const deg = 360 / prizes.length;
+    prizes.forEach((prize, i) => {
+      const span = document.createElement("span");
+      span.innerText = prize;
+      span.style.transform = `rotate(${i * deg}deg) skewY(-60deg)`;
+      wheel.appendChild(span);
+    });
 
-    document.getElementById('wheel').onclick = function () {
-      const prize = prizes[Math.floor(Math.random() * prizes.length)];
-      currentPrize = prize;
-      document.getElementById('result').innerText = `Bạn trúng thẻ: ${prize}`;
-      document.getElementById('getCardBtn').style.display = 'inline-block';
-    }
+    let isSpinning = false;
 
-    function redirectLink() {
-      window.open("https://yeumoney.com/OmFmiio", "_blank");
-      document.getElementById('showCardInfo').style.display = 'inline-block';
-    }
+    spinBtn.onclick = () => {
+      if (isSpinning) return;
+      isSpinning = true;
+      claimBtn.style.display = "none";
+      result.innerText = "";
 
-    function showCard() {
-      const card = fakeCards.find(c => c.amount === currentPrize);
-      if (card) {
-        document.getElementById('cardInfo').innerHTML = `
-          <strong>Mệnh giá:</strong> ${card.amount}<br>
-          <strong>Mã thẻ:</strong> ${card.code}<br>
-          <strong>Serial:</strong> ${card.serial}
-        `;
-      }
-    }
+      const rotation = 3600 + Math.floor(Math.random() * 360);
+      wheel.style.transform = `rotate(${rotation}deg)`;
+
+      const index = prizes.length - Math.floor((rotation % 360) / deg) - 1;
+      const prize = prizes[index < 0 ? index + prizes.length : index];
+
+      setTimeout(() => {
+        result.innerText = `Bạn trúng thẻ: ${prize}`;
+        claimBtn.style.display = "inline-block";
+        isSpinning = false;
+      }, 5000);
+    };
   </script>
 </body>
 </html>
