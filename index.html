@@ -23,7 +23,7 @@
       border-radius: 50%;
       position: relative;
       overflow: hidden;
-      transition: transform 5s cubic-bezier(0.33, 1, 0.68, 1);
+      transition: transform 3s cubic-bezier(0.33, 1, 0.68, 1); /* Thời gian quay nhanh hơn */
     }
     #wheel span {
       position: absolute;
@@ -70,7 +70,7 @@
   <button id="spin">QUAY</button>
   <div id="result"></div>
   <button id="claim" onclick="window.location.href='https://yeumoney.com/OmFmiio'">Nhận thẻ</button>
-
+  
   <script>
     const wheel = document.getElementById("wheel");
     const result = document.getElementById("result");
@@ -106,7 +106,7 @@
         result.innerText = `Bạn trúng thẻ: ${prize}`;
         claimBtn.style.display = "inline-block";
         isSpinning = false;
-      }, 5000);
+      }, 3000); // Giảm thời gian chờ xuống còn 3 giây
     };
   </script>
 </body>
