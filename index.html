@@ -2,55 +2,44 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>🎁 QUAY ĐỂ NHẬN THẺ CÀO</title>
+  <title>Vòng quay thẻ cào</title>
   <style>
     body {
-      background-color: #1b1b1b;
+      background-color: #111;
       color: #fff;
-      text-align: center;
       font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
     }
-    h1 {
-      color: #ff6600;
-      margin-top: 40px;
+    select, button {
+      font-size: 18px;
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 20px;
     }
     #wheel {
       margin: 30px auto;
-      width: 300px;
-      height: 300px;
+      width: 200px;
+      height: 200px;
+      border: 10px solid #ff4dff;
       border-radius: 50%;
-      border: 10px solid #fff;
-      position: relative;
-    }
-    #spin {
-      margin-top: 20px;
-      padding: 15px 30px;
-      font-size: 20px;
-      background: linear-gradient(to right, orange, orangered);
-      color: white;
-      border: none;
-      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
       cursor: pointer;
-    }
-    #pointer {
-      width: 0; 
-      height: 0; 
-      border-left: 20px solid transparent;
-      border-right: 20px solid transparent;
-      border-bottom: 40px solid white;
-      margin: 20px auto;
+      background: radial-gradient(#222, #000);
     }
     #result {
-      margin-top: 20px;
       font-size: 22px;
-      color: #0f0;
+      margin-top: 20px;
     }
-    #nhanTheBtn {
+    #getCardBtn {
       display: none;
       margin-top: 20px;
       padding: 10px 20px;
       font-size: 18px;
-      background-color: #28a745;
+      background-color: #ff4dff;
       color: #fff;
       border: none;
       border-radius: 8px;
@@ -59,79 +48,39 @@
   </style>
 </head>
 <body>
-  <h1>🎉 QUAY ĐỂ NHẬN THẺ CÀO</h1>
-  <div id="pointer"></div>
-  <canvas id="wheel" width="300" height="300"></canvas>
-  <div>
-    <button id="spin">QUAY</button>
-  </div>
+  <h1>🎁 Nhận thẻ cào miễn phí 🎁</h1>
+  
+  <label for="cardType">Chọn loại thẻ:</label><br>
+  <select id="cardType">
+    <option value="Viettel">Viettel</option>
+    <option value="VinaPhone">VinaPhone</option>
+    <option value="Garena">Garena</option>
+  </select>
+
+  <div id="wheel">QUAY</div>
   <div id="result"></div>
-  <button id="nhanTheBtn">Nhận thẻ</button>
+  <button id="getCardBtn" onclick="redirect()">Nhận thẻ</button>
 
   <script>
-    const canvas = document.getElementById("wheel");
-    const ctx = canvas.getContext("2d");
-    const spinBtn = document.getElementById("spin");
-    const result = document.getElementById("result");
-    const nhanTheBtn = document.getElementById("nhanTheBtn");
+    const prizes = ["10.000đ", "20.000đ", "50.000đ", "100.000đ", "200.000đ", "500.000đ"];
+    let currentPrize = "";
 
-    const prizes = ["10k", "20k", "30k", "30k", "40k", "50k", "60k", "70k", "80k", "90k", "200k", "500k"];
-    const colors = ["#ff0000", "#ff9900", "#33cc33", "#00ccff", "#ff66cc", "#9966ff", "#ffff00", "#ff6600", "#0099cc", "#cc33ff", "#00cc99", "#ff3399"];
+    document.getElementById('wheel').onclick = function () {
+      const selectedType = document.getElementById("cardType").value;
+      const prize = prizes[Math.floor(Math.random() * prizes.length)];
+      currentPrize = prize;
 
-    const sliceAngle = 360 / prizes.length;
-    let angle = 0;
-    let isSpinning = false;
+      localStorage.setItem("ketqua", prize);
+      localStorage.setItem("loaicard", selectedType);
 
-    function drawWheel() {
-      for (let i = 0; i < prizes.length; i++) {
-        ctx.beginPath();
-        ctx.fillStyle = colors[i];
-        ctx.moveTo(150, 150);
-        ctx.arc(150, 150, 150, i * sliceAngle * Math.PI / 180, (i + 1) * sliceAngle * Math.PI / 180);
-        ctx.lineTo(150, 150);
-        ctx.fill();
-        ctx.save();
-        ctx.translate(150, 150);
-        ctx.rotate((i + 0.5) * sliceAngle * Math.PI / 180);
-        ctx.textAlign = "right";
-        ctx.fillStyle = "#fff";
-        ctx.font = "16px Arial";
-        ctx.fillText(prizes[i], 140, 5);
-        ctx.restore();
-      }
+      document.getElementById('result').innerText = `Bạn trúng thẻ ${selectedType} mệnh giá ${prize}`;
+      document.getElementById('getCardBtn').style.display = 'inline-block';
     }
 
-    drawWheel();
-
-    spinBtn.onclick = function () {
-      if (isSpinning) return;
-      isSpinning = true;
-      result.innerText = "";
-      nhanTheBtn.style.display = "none";
-
-      const spinAngle = 360 * 5 + Math.floor(Math.random() * 360);
-      const prizeIndex = Math.floor(((360 - (spinAngle % 360)) % 360) / sliceAngle);
-      angle = 0;
-
-      let spinTime = 0;
-      const spinInterval = setInterval(() => {
-        angle += 10;
-        canvas.style.transform = `rotate(${angle}deg)`;
-        spinTime += 10;
-        if (spinTime >= 5000) {
-          clearInterval(spinInterval);
-          const wonPrize = prizes[prizeIndex];
-          result.innerText = `🎉 Bạn trúng: ${wonPrize}`;
-          localStorage.setItem("ketqua", wonPrize);
-          nhanTheBtn.style.display = "inline-block";
-          isSpinning = false;
-        }
-      }, 10);
-    };
-
-    nhanTheBtn.onclick = function () {
-      window.location.href = "https://yeumoney.com/abcd123"; // 🔁 Thay bằng link của bạn
-    };
+    function redirect() {
+      // Vượt link trước rồi chuyển sang thecao.html
+      window.location.href = "https://yeumoney.com/OmFmiio?next=thecao.html";
+    }
   </script>
 </body>
 </html>
