@@ -94,10 +94,10 @@
     selectedReward = rewards[targetIndex];
 
     // Góc của phần thưởng mục tiêu
-    const stopAngle = (rewards.length - targetIndex) * arcSize - arcSize / 2;
+    const stopAngle = targetIndex * arcSize + arcSize / 2;
 
     // Quay thêm 5 vòng + tới đúng phần thưởng
-    const finalAngle = 2 * Math.PI * 5 + stopAngle;
+    const finalAngle = 2 * Math.PI * 5 - stopAngle;
 
     const start = performance.now();
 
