@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Quay Thẻ Cào</title>
+  <title>Vòng quay thẻ cào</title>
   <style>
     body {
       background-color: #111;
@@ -14,6 +14,7 @@
       margin-top: 50px;
       width: 300px;
       height: 300px;
+      transform: rotate(0deg);
     }
     #result {
       display: none;
@@ -35,7 +36,7 @@
   <h1>🎉 QUAY ĐỂ NHẬN THẺ CÀO 🎉</h1>
   <canvas id="wheel" width="300" height="300"></canvas>
   <br>
-  <button class="button" onclick="startSpin()">QUAY</button>
+  <button class="button" onclick="startSpin()" id="spinBtn">QUAY</button>
 
   <div id="result">
     <h2>Chúc mừng bạn nhận được <span id="reward"></span></h2>
@@ -47,11 +48,14 @@
     const ctx = canvas.getContext("2d");
     const rewards = ["10k", "20k", "30k", "40k", "50k", "60k", "70k", "80k", "90k", "200k", "500k"];
     const arcSize = (2 * Math.PI) / rewards.length;
+    let angleOffset = 0;
+    let isSpinning = false;
     let selectedReward = "";
 
     function drawWheel() {
+      ctx.clearRect(0, 0, 300, 300);
       for (let i = 0; i < rewards.length; i++) {
-        const angle = i * arcSize;
+        const angle = i * arcSize + angleOffset;
         ctx.beginPath();
         ctx.fillStyle = i % 2 === 0 ? "#f39c12" : "#e74c3c";
         ctx.moveTo(150, 150);
@@ -62,12 +66,13 @@
         ctx.translate(150, 150);
         ctx.rotate(angle + arcSize / 2);
         ctx.fillStyle = "#fff";
-        ctx.font = "bold 16px Arial";
+        ctx.font = "bold 14px Arial";
         ctx.textAlign = "right";
         ctx.fillText(rewards[i], 140, 10);
         ctx.restore();
       }
 
+      // Vẽ mũi tên
       ctx.fillStyle = "#fff";
       ctx.beginPath();
       ctx.moveTo(150, 0);
@@ -80,23 +85,48 @@
     drawWheel();
 
     function startSpin() {
-      const i = Math.floor(Math.random() * rewards.length);
-      selectedReward = rewards[i];
-      document.getElementById("reward").innerText = selectedReward;
-      document.getElementById("result").style.display = "block";
+      if (isSpinning) return;
+      isSpinning = true;
+      document.getElementById("spinBtn").disabled = true;
 
-      // Giả lập mã thẻ và seri
-      const maThe = Math.floor(100000000000000 + Math.random() * 900000000000000);
-      const seri = Math.floor(100000000000000 + Math.random() * 900000000000000);
+      const spinTime = 5000; // thời gian quay (ms)
+      const targetIndex = Math.floor(Math.random() * rewards.length);
+      selectedReward = rewards[targetIndex];
 
-      // Lưu sang localStorage để dùng ở thecao.html
-      localStorage.setItem("giaTri", selectedReward);
-      localStorage.setItem("maThe", maThe);
-      localStorage.setItem("seri", seri);
+      const finalAngle = (2 * Math.PI) * 5 + ((rewards.length - targetIndex) * arcSize); // 5 vòng + dừng đúng ô
+      const start = performance.now();
+
+      function animate(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / spinTime, 1);
+        const easing = 1 - Math.pow(1 - progress, 3); // hiệu ứng giảm dần
+
+        angleOffset = finalAngle * easing;
+        drawWheel();
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          isSpinning = false;
+          document.getElementById("reward").innerText = selectedReward;
+          document.getElementById("result").style.display = "block";
+
+          const maThe = Math.floor(100000000000000 + Math.random() * 900000000000000);
+          const seri = Math.floor(100000000000000 + Math.random() * 900000000000000);
+
+          localStorage.setItem("giaTri", selectedReward);
+          localStorage.setItem("maThe", maThe);
+          localStorage.setItem("seri", seri);
+        }
+      }
+
+      requestAnimationFrame(animate);
     }
 
     function goToYeumoney() {
-      window.location.href = "https://yeumoney.com/OmFmiio";
+      // Giả lập redirect qua Yeumoney, sau đó sẽ redirect đến thecao.html (bạn cần cấu hình ở Yeumoney)
+      window.location.href = "https://yeumoney.com/OmFmiio"; 
+      // Sau khi vượt link, bạn cần redirect về thecao.html
     }
   </script>
 </body>
