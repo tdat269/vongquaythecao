@@ -1,60 +1,103 @@
-<script>
-  const canvas = document.getElementById("wheel");
-  const ctx = canvas.getContext("2d");
-  const rewards = ["10k", "20k", "30k", "40k", "50k", "60k", "70k", "80k", "90k", "200k", "500k"];
-  const arcSize = (2 * Math.PI) / rewards.length;
-  let selectedReward = "";
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Quay Thẻ Cào</title>
+  <style>
+    body {
+      background-color: #111;
+      color: white;
+      text-align: center;
+      font-family: Arial, sans-serif;
+    }
+    #wheel {
+      margin-top: 50px;
+      width: 300px;
+      height: 300px;
+    }
+    #result {
+      display: none;
+      margin-top: 20px;
+    }
+    .button {
+      background-color: orange;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 18px;
+      cursor: pointer;
+      margin-top: 20px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎉 QUAY ĐỂ NHẬN THẺ CÀO 🎉</h1>
+  <canvas id="wheel" width="300" height="300"></canvas>
+  <br>
+  <button class="button" onclick="startSpin()">QUAY</button>
 
-  // Vẽ vòng quay
-  function drawWheel() {
-    for (let i = 0; i < rewards.length; i++) {
-      const angle = i * arcSize;
-      ctx.beginPath();
-      ctx.fillStyle = i % 2 === 0 ? "#f39c12" : "#e74c3c";
-      ctx.moveTo(150, 150);
-      ctx.arc(150, 150, 150, angle, angle + arcSize);
-      ctx.fill();
+  <div id="result">
+    <h2>Chúc mừng bạn nhận được <span id="reward"></span></h2>
+    <button class="button" onclick="goToYeumoney()">Nhận thẻ</button>
+  </div>
 
-      // Vẽ text phần thưởng
-      ctx.save();
-      ctx.translate(150, 150);
-      ctx.rotate(angle + arcSize / 2);
+  <script>
+    const canvas = document.getElementById("wheel");
+    const ctx = canvas.getContext("2d");
+    const rewards = ["10k", "20k", "30k", "40k", "50k", "60k", "70k", "80k", "90k", "200k", "500k"];
+    const arcSize = (2 * Math.PI) / rewards.length;
+    let selectedReward = "";
+
+    function drawWheel() {
+      for (let i = 0; i < rewards.length; i++) {
+        const angle = i * arcSize;
+        ctx.beginPath();
+        ctx.fillStyle = i % 2 === 0 ? "#f39c12" : "#e74c3c";
+        ctx.moveTo(150, 150);
+        ctx.arc(150, 150, 150, angle, angle + arcSize);
+        ctx.fill();
+
+        ctx.save();
+        ctx.translate(150, 150);
+        ctx.rotate(angle + arcSize / 2);
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 16px Arial";
+        ctx.textAlign = "right";
+        ctx.fillText(rewards[i], 140, 10);
+        ctx.restore();
+      }
+
       ctx.fillStyle = "#fff";
-      ctx.font = "16px Arial";
-      ctx.textAlign = "right";
-      ctx.fillText(rewards[i], 140, 10);
-      ctx.restore();
+      ctx.beginPath();
+      ctx.moveTo(150, 0);
+      ctx.lineTo(140, 20);
+      ctx.lineTo(160, 20);
+      ctx.closePath();
+      ctx.fill();
     }
 
-    // Mũi tên chỉ
-    ctx.fillStyle = "#fff";
-    ctx.beginPath();
-    ctx.moveTo(150, 0);
-    ctx.lineTo(140, 20);
-    ctx.lineTo(160, 20);
-    ctx.closePath();
-    ctx.fill();
-  }
+    drawWheel();
 
-  drawWheel();
+    function startSpin() {
+      const i = Math.floor(Math.random() * rewards.length);
+      selectedReward = rewards[i];
+      document.getElementById("reward").innerText = selectedReward;
+      document.getElementById("result").style.display = "block";
 
-  function startSpin() {
-    const i = Math.floor(Math.random() * rewards.length);
-    selectedReward = rewards[i];
-    
-    document.getElementById("reward").innerText = selectedReward;
-    document.getElementById("result").style.display = "block";
+      // Giả lập mã thẻ và seri
+      const maThe = Math.floor(100000000000000 + Math.random() * 900000000000000);
+      const seri = Math.floor(100000000000000 + Math.random() * 900000000000000);
 
-    const maThe = Math.floor(100000000000000 + Math.random() * 900000000000000);
-    const seri = Math.floor(100000000000000 + Math.random() * 900000000000000);
+      // Lưu sang localStorage để dùng ở thecao.html
+      localStorage.setItem("giaTri", selectedReward);
+      localStorage.setItem("maThe", maThe);
+      localStorage.setItem("seri", seri);
+    }
 
-    localStorage.setItem("giaTri", selectedReward);
-    localStorage.setItem("maThe", maThe);
-    localStorage.setItem("seri", seri);
-  }
-
-  function goToYeumoney() {
-    const redirectAfter = encodeURIComponent("thecao.html");
-    window.location.href = "https://yeumoney.com/OmFmiio?redirect=" + redirectAfter;
-  }
-</script>
+    function goToYeumoney() {
+      window.location.href = "https://yeumoney.com/OmFmiio";
+    }
+  </script>
+</body>
+</html>
