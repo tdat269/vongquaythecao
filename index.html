@@ -3,83 +3,91 @@
 <head>
   <meta charset="UTF-8">
   <title>Vòng quay thẻ cào</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/winwheel@2.7.0/dist/Winwheel.min.js"></script>
   <style>
     body {
-      background-color: #111;
-      color: #fff;
-      font-family: Arial, sans-serif;
+      background-color: #1e1e1e;
+      color: white;
       text-align: center;
-      padding: 50px;
+      font-family: Arial, sans-serif;
+      padding-top: 30px;
     }
-    select, button {
-      font-size: 18px;
-      padding: 10px;
-      border-radius: 6px;
+    #canvas {
+      margin: auto;
+      display: block;
+    }
+    #spinButton {
       margin-top: 20px;
-    }
-    #wheel {
-      margin: 30px auto;
-      width: 200px;
-      height: 200px;
-      border: 10px solid #ff4dff;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 24px;
+      font-size: 20px;
+      padding: 10px 30px;
+      background: linear-gradient(#ff6600, #cc3300);
+      color: white;
+      border: none;
+      border-radius: 10px;
       cursor: pointer;
-      background: radial-gradient(#222, #000);
     }
     #result {
-      font-size: 22px;
       margin-top: 20px;
-    }
-    #getCardBtn {
-      display: none;
-      margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 18px;
-      background-color: #ff4dff;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
+      font-size: 24px;
+      color: #00ff99;
     }
   </style>
 </head>
 <body>
-  <h1>🎁 Nhận thẻ cào miễn phí 🎁</h1>
-  
-  <label for="cardType">Chọn loại thẻ:</label><br>
-  <select id="cardType">
-    <option value="Viettel">Viettel</option>
-    <option value="VinaPhone">VinaPhone</option>
-    <option value="Garena">Garena</option>
-  </select>
 
-  <div id="wheel">QUAY</div>
+  <h1>🎉 Vòng quay thẻ cào 🎉</h1>
+  <canvas id="canvas" width="500" height="500"></canvas>
+  <button id="spinButton" onclick="startSpin()">QUAY</button>
   <div id="result"></div>
-  <button id="getCardBtn" onclick="redirect()">Nhận thẻ</button>
 
   <script>
-    const prizes = ["10.000đ", "20.000đ", "50.000đ", "100.000đ", "200.000đ", "500.000đ"];
-    let currentPrize = "";
+    let theWheel = new Winwheel({
+      numSegments: 12,
+      outerRadius: 200,
+      innerRadius: 30,
+      textFontSize: 18,
+      textOrientation: 'horizontal',
+      textAlignment: 'center',
+      segments: [
+        {'fillStyle': '#f44336', 'text': '10k'},
+        {'fillStyle': '#FF9800', 'text': '20k'},
+        {'fillStyle': '#E91E63', 'text': '30k'},
+        {'fillStyle': '#FFEB3B', 'text': '40k'},
+        {'fillStyle': '#03A9F4', 'text': '50k'},
+        {'fillStyle': '#3F51B5', 'text': '60k'},
+        {'fillStyle': '#4CAF50', 'text': '70k'},
+        {'fillStyle': '#8BC34A', 'text': '80k'},
+        {'fillStyle': '#F50057', 'text': '90k'},
+        {'fillStyle': '#CDDC39', 'text': '200k'},
+        {'fillStyle': '#009688', 'text': '500k'},
+        {'fillStyle': '#FF5722', 'text': '30k'}
+      ],
+      animation: {
+        type: 'spinToStop',
+        duration: 5,
+        spins: 8,
+        callbackFinished: displayResult
+      },
+      pointerAngle: 0,
+      pins: {
+        number: 24,
+        fillStyle: 'white',
+        outerRadius: 4
+      }
+    });
 
-    document.getElementById('wheel').onclick = function () {
-      const selectedType = document.getElementById("cardType").value;
-      const prize = prizes[Math.floor(Math.random() * prizes.length)];
-      currentPrize = prize;
-
-      localStorage.setItem("ketqua", prize);
-      localStorage.setItem("loaicard", selectedType);
-
-      document.getElementById('result').innerText = `Bạn trúng thẻ ${selectedType} mệnh giá ${prize}`;
-      document.getElementById('getCardBtn').style.display = 'inline-block';
+    function startSpin() {
+      document.getElementById('result').textContent = '';
+      theWheel.stopAnimation(false);
+      theWheel.rotationAngle = 0;
+      theWheel.startAnimation();
     }
 
-    function redirect() {
-      // Vượt link trước rồi chuyển sang thecao.html
-      window.location.href = "https://yeumoney.com/OmFmiio?next=thecao.html";
+    function displayResult(indicatedSegment) {
+      const prize = indicatedSegment.text;
+      document.getElementById('result').textContent = `Bạn trúng: ${prize}`;
+      localStorage.setItem("ketqua", prize);
     }
   </script>
 </body>
