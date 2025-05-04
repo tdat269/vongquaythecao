@@ -2,79 +2,32 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Thông tin thẻ cào</title>
+  <title>Thẻ cào trúng thưởng</title>
   <style>
-    body {
-      background-color: #000;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 50px;
-    }
-    h1 {
-      color: #ff4dff;
-    }
-    #cardInfo {
-      margin-top: 20px;
-      font-size: 20px;
-      color: #0f0;
-      background: #111;
+    body { background-color: #111; color: #fff; font-family: Arial; text-align: center; padding-top: 50px; }
+    .card {
+      background: #222;
+      border: 2px solid #ff00cc;
       padding: 20px;
-      border-radius: 10px;
+      border-radius: 15px;
       display: inline-block;
     }
+    h1 { color: orange; }
+    .value { font-size: 24px; margin-top: 10px; }
   </style>
 </head>
 <body>
-  <h1>🎉 Thông tin thẻ bạn nhận được:</h1>
-  <div id="cardInfo">Đang tải...</div>
+  <h1>🎉 Bạn đã nhận thẻ cào thành công! 🎉</h1>
+  <div class="card">
+    <div class="value">Mệnh giá: <strong id="giatri"></strong></div>
+    <div class="value">Mã thẻ: <strong id="mathe"></strong></div>
+    <div class="value">Seri: <strong id="seri"></strong></div>
+  </div>
 
   <script>
-    const prize = localStorage.getItem("ketqua");
-    const type = localStorage.getItem("loaicard");
-    const div = document.getElementById("cardInfo");
-
-    function generateNumeric(length) {
-      let result = "";
-      const chars = "0123456789";
-      for (let i = 0; i < length; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-      }
-      return result;
-    }
-
-    function generateGarenaCode(length) {
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-      let result = "";
-      for (let i = 0; i < length; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-      }
-      return result;
-    }
-
-    let code = "", serial = "";
-
-    if (type === "Viettel") {
-      code = generateNumeric(14);
-      serial = generateNumeric(13);
-    } else if (type === "VinaPhone") {
-      code = generateNumeric(15);
-      serial = generateNumeric(11);
-    } else if (type === "Garena") {
-      code = generateGarenaCode(16);
-      serial = generateNumeric(10);
-    }
-
-    if (prize && type) {
-      div.innerHTML = `
-        <strong>Loại thẻ:</strong> ${type}<br>
-        <strong>Mệnh giá:</strong> ${prize}<br>
-        <strong>Mã thẻ:</strong> ${code}<br>
-        <strong>Serial:</strong> ${serial}
-      `;
-    } else {
-      div.innerText = "Không tìm thấy thông tin thẻ. Vui lòng quay lại trang chủ và thử lại.";
-    }
+    document.getElementById("giatri").innerText = localStorage.getItem("giaTri") || "Không xác định";
+    document.getElementById("mathe").innerText = localStorage.getItem("maThe") || "Không có";
+    document.getElementById("seri").innerText = localStorage.getItem("seri") || "Không có";
   </script>
 </body>
 </html>
