@@ -14,7 +14,6 @@
       margin-top: 50px;
       width: 300px;
       height: 300px;
-      transform: rotate(0deg);
     }
     #result {
       display: none;
@@ -44,95 +43,89 @@
   </div>
 
   <script>
-  const canvas = document.getElementById("wheel");
-  const ctx = canvas.getContext("2d");
-  const rewards = ["10k", "20k", "30k", "40k", "50k", "60k", "70k", "80k", "90k", "200k", "500k"];
-  const arcSize = (2 * Math.PI) / rewards.length;
-  let angleOffset = 0;
-  let isSpinning = false;
-  let selectedReward = "";
+    const canvas = document.getElementById("wheel");
+    const ctx = canvas.getContext("2d");
+    const rewards = ["10k", "20k", "30k", "40k", "50k", "60k", "70k", "80k", "90k", "200k", "500k"];
+    const arcSize = (2 * Math.PI) / rewards.length;
+    let angleOffset = 0;
+    let isSpinning = false;
+    let selectedReward = "";
 
-  function drawWheel() {
-    ctx.clearRect(0, 0, 300, 300);
-    for (let i = 0; i < rewards.length; i++) {
-      const angle = i * arcSize + angleOffset;
-      ctx.beginPath();
-      ctx.fillStyle = i % 2 === 0 ? "#f39c12" : "#e74c3c";
-      ctx.moveTo(150, 150);
-      ctx.arc(150, 150, 150, angle, angle + arcSize);
-      ctx.fill();
+    function drawWheel() {
+      ctx.clearRect(0, 0, 300, 300);
+      for (let i = 0; i < rewards.length; i++) {
+        const angle = i * arcSize + angleOffset;
+        ctx.beginPath();
+        ctx.fillStyle = i % 2 === 0 ? "#f39c12" : "#e74c3c";
+        ctx.moveTo(150, 150);
+        ctx.arc(150, 150, 150, angle, angle + arcSize);
+        ctx.fill();
 
-      ctx.save();
-      ctx.translate(150, 150);
-      ctx.rotate(angle + arcSize / 2);
-      ctx.fillStyle = "#fff";
-      ctx.font = "bold 14px Arial";
-      ctx.textAlign = "right";
-      ctx.fillText(rewards[i], 140, 10);
-      ctx.restore();
-    }
-
-    // Vẽ mũi tên
-    ctx.fillStyle = "#fff";
-    ctx.beginPath();
-    ctx.moveTo(150, 0);
-    ctx.lineTo(140, 20);
-    ctx.lineTo(160, 20);
-    ctx.closePath();
-    ctx.fill();
-  }
-
-  drawWheel();
-
-  function startSpin() {
-    if (isSpinning) return;
-    isSpinning = true;
-    document.getElementById("spinBtn").disabled = true;
-
-    const spinTime = 5000; // ms
-    const targetIndex = Math.floor(Math.random() * rewards.length);
-    selectedReward = rewards[targetIndex];
-
-    // Góc của phần thưởng mục tiêu
-    const stopAngle = targetIndex * arcSize + arcSize / 2;
-
-    // Quay thêm 5 vòng + tới đúng phần thưởng
-    const finalAngle = 2 * Math.PI * 5 - stopAngle;
-
-    const start = performance.now();
-
-    function animate(now) {
-      const elapsed = now - start;
-      const progress = Math.min(elapsed / spinTime, 1);
-      const easing = 1 - Math.pow(1 - progress, 3); // hiệu ứng giảm dần
-
-      angleOffset = finalAngle * easing;
-      drawWheel();
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        isSpinning = false;
-        document.getElementById("reward").innerText = selectedReward;
-        document.getElementById("result").style.display = "block";
-
-        const maThe = Math.floor(100000000000000 + Math.random() * 900000000000000);
-        const seri = Math.floor(100000000000000 + Math.random() * 900000000000000);
-
-        localStorage.setItem("giaTri", selectedReward);
-        localStorage.setItem("maThe", maThe);
-        localStorage.setItem("seri", seri);
-        document.getElementById("spinBtn").disabled = false;
+        ctx.save();
+        ctx.translate(150, 150);
+        ctx.rotate(angle + arcSize / 2);
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 14px Arial";
+        ctx.textAlign = "right";
+        ctx.fillText(rewards[i], 140, 10);
+        ctx.restore();
       }
+
+      // Vẽ mũi tên
+      ctx.fillStyle = "#fff";
+      ctx.beginPath();
+      ctx.moveTo(150, 0);
+      ctx.lineTo(140, 20);
+      ctx.lineTo(160, 20);
+      ctx.closePath();
+      ctx.fill();
     }
 
-    requestAnimationFrame(animate);
-  }
+    drawWheel();
 
-  function goToYeumoney() {
-    window.location.href = "https://yeumoney.com/EikrXYJ";
-  }
-</script>
+    function startSpin() {
+      if (isSpinning) return;
+      isSpinning = true;
+      document.getElementById("spinBtn").disabled = true;
 
+      const spinTime = 5000;
+      const targetIndex = Math.floor(Math.random() * rewards.length);
+      selectedReward = rewards[targetIndex];
+
+      const stopAngle = (Math.PI * 3 / 2) - (targetIndex * arcSize + arcSize / 2); // mũi tên ở top (270 độ)
+      const finalAngle = (2 * Math.PI * 5) + stopAngle; // quay 5 vòng rồi trúng đúng ô
+
+      const start = performance.now();
+
+      function animate(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / spinTime, 1);
+        const easing = 1 - Math.pow(1 - progress, 3);
+        angleOffset = finalAngle * easing;
+        drawWheel();
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          isSpinning = false;
+          document.getElementById("reward").innerText = selectedReward;
+          document.getElementById("result").style.display = "block";
+
+          const maThe = Math.floor(100000000000000 + Math.random() * 900000000000000);
+          const seri = Math.floor(100000000000000 + Math.random() * 900000000000000);
+
+          localStorage.setItem("giaTri", selectedReward);
+          localStorage.setItem("maThe", maThe);
+          localStorage.setItem("seri", seri);
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    function goToYeumoney() {
+      window.location.href = "https://yeumoney.com/EikrXYJ";
+    }
+  </script>
 </body>
 </html>
