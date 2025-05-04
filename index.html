@@ -2,44 +2,61 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Vòng quay thẻ cào</title>
+  <title>🎉 Vòng quay thẻ cào 🎉</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/winwheel@2.7.0/dist/Winwheel.min.js"></script>
   <style>
     body {
       background-color: #1e1e1e;
       color: white;
-      text-align: center;
       font-family: Arial, sans-serif;
-      padding-top: 30px;
+      text-align: center;
+      padding: 20px;
     }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 30px;
+    }
+
     #canvas {
       margin: auto;
       display: block;
     }
-    #spinButton {
-      margin-top: 20px;
+
+    #spinButton, #getCardButton {
+      margin-top: 25px;
       font-size: 20px;
-      padding: 10px 30px;
+      padding: 10px 25px;
       background: linear-gradient(#ff6600, #cc3300);
       color: white;
       border: none;
       border-radius: 10px;
       cursor: pointer;
+      transition: 0.3s;
     }
+
+    #spinButton:hover, #getCardButton:hover {
+      background: linear-gradient(#ff3300, #cc2200);
+    }
+
     #result {
       margin-top: 20px;
-      font-size: 24px;
+      font-size: 22px;
       color: #00ff99;
     }
   </style>
 </head>
 <body>
-
   <h1>🎉 Vòng quay thẻ cào 🎉</h1>
+
   <canvas id="canvas" width="500" height="500"></canvas>
+
   <button id="spinButton" onclick="startSpin()">QUAY</button>
+
   <div id="result"></div>
+
+  <button id="getCardButton" style="display: none;" onclick="redirectToLink()">Nhận thẻ</button>
 
   <script>
     let theWheel = new Winwheel({
@@ -79,6 +96,7 @@
 
     function startSpin() {
       document.getElementById('result').textContent = '';
+      document.getElementById('getCardButton').style.display = 'none';
       theWheel.stopAnimation(false);
       theWheel.rotationAngle = 0;
       theWheel.startAnimation();
@@ -86,8 +104,14 @@
 
     function displayResult(indicatedSegment) {
       const prize = indicatedSegment.text;
-      document.getElementById('result').textContent = `Bạn trúng: ${prize}`;
+      document.getElementById('result').textContent = `🎁 Bạn trúng: ${prize}`;
       localStorage.setItem("ketqua", prize);
+      document.getElementById('getCardButton').style.display = 'inline-block';
+    }
+
+    function redirectToLink() {
+      // Chuyển sang trang Yeumoney trước
+      window.location.href = "https://yeumoney.vn/link/redirect?next=https://tdat269.github.io/vongquaythecao/thecao.html";
     }
   </script>
 </body>
