@@ -3,47 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <title>🎉 Vòng quay thẻ cào 🎉</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.0/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/winwheel@2.7.0/dist/Winwheel.min.js"></script>
   <style>
     body {
+      margin: 0;
       background-color: #1e1e1e;
       color: white;
-      font-family: Arial, sans-serif;
+      font-family: 'Arial', sans-serif;
       text-align: center;
-      padding: 20px;
     }
 
     h1 {
+      margin-top: 40px;
       font-size: 32px;
-      margin-bottom: 30px;
     }
 
     #canvas {
-      margin: auto;
-      display: block;
+      margin-top: 20px;
     }
 
-    #spinButton, #getCardButton {
-      margin-top: 25px;
-      font-size: 20px;
+    #spinButton {
+      margin-top: 30px;
       padding: 10px 25px;
-      background: linear-gradient(#ff6600, #cc3300);
-      color: white;
+      font-size: 18px;
       border: none;
       border-radius: 10px;
+      background: linear-gradient(to bottom, #ff6600, #cc3300);
+      color: white;
       cursor: pointer;
       transition: 0.3s;
     }
 
-    #spinButton:hover, #getCardButton:hover {
-      background: linear-gradient(#ff3300, #cc2200);
+    #spinButton:hover {
+      background: linear-gradient(to bottom, #ff3300, #aa2200);
     }
 
     #result {
       margin-top: 20px;
-      font-size: 22px;
+      font-size: 20px;
       color: #00ff99;
+    }
+
+    #getCardButton {
+      margin-top: 20px;
+      display: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #getCardButton:hover {
+      background-color: #218838;
     }
   </style>
 </head>
@@ -52,65 +67,66 @@
 
   <canvas id="canvas" width="500" height="500"></canvas>
 
-  <button id="spinButton" onclick="startSpin()">QUAY</button>
+  <div>
+    <button id="spinButton" onclick="startSpin()">QUAY</button>
+  </div>
 
   <div id="result"></div>
 
-  <button id="getCardButton" style="display: none;" onclick="redirectToLink()">Nhận thẻ</button>
+  <button id="getCardButton" onclick="redirectToLink()">Nhận thẻ</button>
 
   <script>
-    let theWheel = new Winwheel({
+    let wheel = new Winwheel({
+      canvasId: 'canvas',
       numSegments: 12,
-      outerRadius: 200,
-      innerRadius: 30,
-      textFontSize: 18,
-      textOrientation: 'horizontal',
-      textAlignment: 'center',
+      outerRadius: 220,
+      innerRadius: 50,
+      textFontSize: 20,
       segments: [
-        {'fillStyle': '#f44336', 'text': '10k'},
-        {'fillStyle': '#FF9800', 'text': '20k'},
-        {'fillStyle': '#E91E63', 'text': '30k'},
-        {'fillStyle': '#FFEB3B', 'text': '40k'},
-        {'fillStyle': '#03A9F4', 'text': '50k'},
-        {'fillStyle': '#3F51B5', 'text': '60k'},
-        {'fillStyle': '#4CAF50', 'text': '70k'},
-        {'fillStyle': '#8BC34A', 'text': '80k'},
-        {'fillStyle': '#F50057', 'text': '90k'},
-        {'fillStyle': '#CDDC39', 'text': '200k'},
-        {'fillStyle': '#009688', 'text': '500k'},
-        {'fillStyle': '#FF5722', 'text': '30k'}
+        { fillStyle: "#f44336", text: "10k" },
+        { fillStyle: "#FF9800", text: "20k" },
+        { fillStyle: "#E91E63", text: "30k" },
+        { fillStyle: "#FFEB3B", text: "40k" },
+        { fillStyle: "#03A9F4", text: "50k" },
+        { fillStyle: "#3F51B5", text: "60k" },
+        { fillStyle: "#4CAF50", text: "70k" },
+        { fillStyle: "#8BC34A", text: "80k" },
+        { fillStyle: "#F50057", text: "90k" },
+        { fillStyle: "#CDDC39", text: "200k" },
+        { fillStyle: "#009688", text: "500k" },
+        { fillStyle: "#FF5722", text: "30k" }
       ],
       animation: {
-        type: 'spinToStop',
+        type: "spinToStop",
         duration: 5,
-        spins: 8,
-        callbackFinished: displayResult
+        spins: 6,
+        callbackFinished: showResult
       },
       pointerAngle: 0,
       pins: {
         number: 24,
-        fillStyle: 'white',
+        fillStyle: "white",
         outerRadius: 4
       }
     });
 
     function startSpin() {
-      document.getElementById('result').textContent = '';
+      wheel.stopAnimation(false);
+      wheel.rotationAngle = 0;
+      wheel.startAnimation();
+      document.getElementById('result').innerText = "";
       document.getElementById('getCardButton').style.display = 'none';
-      theWheel.stopAnimation(false);
-      theWheel.rotationAngle = 0;
-      theWheel.startAnimation();
     }
 
-    function displayResult(indicatedSegment) {
-      const prize = indicatedSegment.text;
-      document.getElementById('result').textContent = `🎁 Bạn trúng: ${prize}`;
-      localStorage.setItem("ketqua", prize);
+    function showResult(segment) {
+      const resultText = `🎁 Bạn trúng: ${segment.text}`;
+      document.getElementById('result').innerText = resultText;
+      localStorage.setItem("ketqua", segment.text);
       document.getElementById('getCardButton').style.display = 'inline-block';
     }
 
     function redirectToLink() {
-      // Chuyển sang trang Yeumoney trước
+      // Link trung gian Yeumoney
       window.location.href = "https://yeumoney.vn/link/redirect?next=https://tdat269.github.io/vongquaythecao/thecao.html";
     }
   </script>
